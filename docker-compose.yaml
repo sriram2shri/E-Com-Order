@@ -1,0 +1,30 @@
+services:
+
+   mysql:
+     image: mysql:8.0
+     container_name: mysql
+     restart: always
+    #  ports:
+    #     - "3306:3306"
+     environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: ecom_order_service
+     volumes:
+        - mysql-data:/var/lib/mysql
+   ecom-order-service:
+     image: order-service:latest 
+    #  build:
+    #    context: .
+    #    dockerfile: Dockerfile
+     ports:
+       - "8081:8080"
+     environment:
+        SERVER_PORT: "8080"
+        DB_HOST: mysql
+        SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ecom_order_service
+    #  volumes:
+    #    - name-volume:/app
+
+volumes:
+  # name-volume:
+  mysql-data:
