@@ -1,0 +1,62 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    ports: 
+      - "3306:3306"
+    environment:
+        MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+        MYSQL_DATABASE: products
+    volumes:
+       - mysql-data:/var/lib/mysql   # mysql-data is created and managed by Docker.
+                                     # /var/lib/mysql is the standard data directory inside the MySQL container.
+  eureka-server:
+    build:
+      context: ./ecom-eureka-server       #context identifies the project directory,dockerfile identifies the Dockerfile,image specifies the name of the generated image.
+      dockerfile: Dockerfile
+    container_name: eureka-server
+    restart: always
+    ports:
+      - "8761:8761"
+
+  inventory-service:
+    build:
+      context: ./ecom-inventory-service
+      dockerfile: Dockerfile
+    container_name: ecom-inventory-service
+    restart: always
+    ports:
+      - "8082:8082"
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - mysql
+      - eureka-server
+
+  order-service:
+    build:
+      context: ./ecom-order-service
+      dockerfile: Dockerfile
+    container_name: ecom-order-service
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - inventory-service
+      - eureka-server
+  api-gateway:
+    build:
+      context: ./ecom-api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    restart: always
+    ports:
+      - "9090:9090"
+    depends_on:
+      - eureka-server
+      - order-service
+      - inventory-service
+volumes:
+  mysql-data:
