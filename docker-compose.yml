@@ -4,7 +4,7 @@ services:
     container_name: mysql
     restart: always
     ports: 
-      - "3306:3306"
+      - "3307:3306"
     environment:
         MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
         MYSQL_DATABASE: products
@@ -18,7 +18,7 @@ services:
     container_name: eureka-server
     restart: always
     ports:
-      - "8761:8761"
+      - "8762:8761"
 
   inventory-service:
     build:

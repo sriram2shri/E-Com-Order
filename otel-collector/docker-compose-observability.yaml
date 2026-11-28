@@ -30,3 +30,7 @@ services:
     ports:
       - "5672:5672"  # RabbitMQ messaging
       - "15672:15672"  # RabbitMQ management UI
+networks:
+  default:
+    external: true
+    name: e-commerce_default
